@@ -1,16 +1,25 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\HandyMan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 
-class RegisteredUserController extends Controller
+class HandyManController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        //
+    }
    
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -20,6 +29,7 @@ class RegisteredUserController extends Controller
             'lat' => ['required', 'numeric', 'between:-180,180'],
             'image' => ['sometimes', 'image','mimes:jpeg,png,jpg,gif', 'max:2048'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
+            'category_id' => ['required', 'exists:categorys,id'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
         if($request->hasFile('image')){
@@ -29,7 +39,7 @@ class RegisteredUserController extends Controller
             $request['image'] = env('APP_URL').'/storage/images/users/user_default_image.png';
         }
 
-        $user = User::create(
+        $handyMan = HandyMan::create(
             [
             'name' => $request->name,
             'email' => $request->email,
@@ -41,7 +51,31 @@ class RegisteredUserController extends Controller
         ]
     );
 
+    }
 
-        return response()->json(["message"=>'account created','user'=>$user],201);
+    /**
+     * Display the specified resource.
+     */
+    public function show(HandyMan $handyMan)
+    {
+        //
+    }
+
+   
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, HandyMan $handyMan)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(HandyMan $handyMan)
+    {
+        //
     }
 }
