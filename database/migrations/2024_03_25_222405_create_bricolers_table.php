@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('handy_man', function (Blueprint $table) {
-             $table->id();
+            $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->decimal('longitude', 10, 7);
             $table->decimal('latitude', 10, 7);
             $table->string('city');
             $table->longText('profile_image');
-            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('handy_man');
+        Schema::dropIfExists('bricolers');
     }
 };

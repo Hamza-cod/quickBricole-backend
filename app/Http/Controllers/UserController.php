@@ -11,7 +11,6 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource(User::class);
         $this->middleware(['auth:sanctum'])->except(['index','show']);
     }
     /**
@@ -54,7 +53,7 @@ class UserController extends Controller
         ]);
         // dd($request->image);
         if($request->hasFile('image')){
-            $$validated->image = env('APP_URL').'/storage/'.$request->file('image')->store('/images/users','public');
+            $$validated->image = '/storage/'.$request->file('image')->store('/images/users','public');
         }
         $user->update($validated);
           return response()->json(["message"=>'account updated','user'=>$user],200);

@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'handyman' => [
+            'driver' => 'session',
+            'provider' => 'handymans',
+        ],
     ],
 
     /*
@@ -64,11 +68,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'handymans' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Handyman::class,
+        ],
     ],
 
     /*
@@ -93,6 +96,12 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'handymans' => [
+            'provider' => 'handymans',
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,

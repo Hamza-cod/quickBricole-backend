@@ -17,11 +17,18 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): Response
     {
         $request->authenticate();
-
+            $guards =  ['handyman','web',];
+            foreach($guards as $guard)
+            {
+                $currenGuard = Auth::guard($guard);
+                if($currenGuard->check())
+                {
+                    $user = $currenGuard->user();
+                    
+                }
+            }
         $request->session()->regenerate();
-        /** @var User $user  */
-        $user = Auth::user();
-        $token = $user->createToken('main')->plainTextToken;
+        $token = $user->createToken('api',[$user->getRoleAttribute()])->plainTextToken;
         return response(compact('user','token'));
     }
 
@@ -30,6 +37,17 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): Response
     {
+         $guards =  ['handyman','web',];
+            foreach($guards as $guard)
+            {
+                $currenGuard = Auth::guard($guard);
+                if($currenGuard->check())
+                {
+                    $user = $currenGuard->user();
+                    break;
+                }
+            }
+            $user->tokens()->delete();
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

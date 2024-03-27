@@ -12,8 +12,8 @@ class Category extends Model
     protected $fillable = [
         'name'
     ];
-    public function handymans ():HasMany
+    public function bricolers ():HasMany
     {
-        return $this->hasMany(HandyMan::class,'category_id');
+        return $this->hasMany(Handyman::class,'category_id');
     }
 }

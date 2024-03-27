@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\HandymanController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -15,10 +17,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
-});
+    Route::middleware(['auth:sanctum,handyman'])->get('/user', function (Request $request) {
+        return $request->user();
+    });
 
-    Route::get('user/{user}',[UserController::class,'show']);
-    Route::put('user/{user}',[UserController::class,'update']);
-    Route::delete('user/{user}',[UserController::class,'destroy']);
+Route::put('users/{user}',[UserController::class,'update']);
+Route::delete('users/{user}',[UserController::class,'destroy']);
+Route::get('users/{user}',[UserController::class,'show']);
+
+Route::apiResource('handymans',HandymanController::class);
+Route::apiResource('categories',CategoryController::class);
