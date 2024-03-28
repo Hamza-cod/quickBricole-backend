@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -24,6 +26,7 @@ class User extends Authenticatable
         'longitude',
         'latitude',
         'profile_image',
+        'phone_number',
         'password',
     ];
 
@@ -51,4 +54,5 @@ class User extends Authenticatable
     {
         return 'client';
     }
+   
 }

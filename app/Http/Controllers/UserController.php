@@ -11,7 +11,8 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth:sanctum'])->except(['index','show']);
+        $this->authorizeResource(User::class);  
+        $this->middleware(['auth:sanctum']);
     }
     /**
      * Display a listing of the resource.
@@ -43,20 +44,24 @@ class UserController extends Controller
     public function update(Request $request,User $user)
     {
          $validated = $request->validate([
-            'name' => [ 'string', 'max:255'],
-            'city' => ['string', 'max:255'],
-            'lon' => [ 'numeric', 'between:-90,90'],
-            'lat' => ['numeric', 'between:-180,180'],
+            'name' => [ 'required','string', 'max:255'],
+            'city' => ['required','string', 'max:255'],
+            'lon' => [ 'required','numeric', 'between:-90,90'],
+            'lat' => ['required','numeric', 'between:-180,180'],
+            'phone_number' => ['string','max:24'],
             'image' => ['sometimes', 'image','mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'email' => [ 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
-            'password' => ['confirmed', Rules\Password::defaults()],
+            'email' => [ 'required','string', 'lowercase', 'email', 'max:255', 'unique:users'],
+            'password' => ['required','confirmed', Rules\Password::defaults()],
         ]);
-        // dd($request->image);
+         $validated['password']= Hash::make($request->password);
+         $user->fill($validated);
         if($request->hasFile('image')){
-            $$validated->image = '/storage/'.$request->file('image')->store('/images/users','public');
+            $validated['image'] = '/storage/'.$request->file('image')->store('/images/users','public');
+        }else{
+            $validated['image'] = $user->profile_image;
         }
-        $user->update($validated);
-          return response()->json(["message"=>'account updated','user'=>$user],200);
+        $user->save();
+        return response()->json(["message"=>'account updated','user'=>$user]);
     }
 
     /**

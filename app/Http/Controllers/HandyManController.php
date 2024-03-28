@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\HandymanCollection;
 use App\Http\Resources\HandymanResource;
-use App\Models\Bricoler;
 use App\Models\Handyman;
+use App\Policies\HandymanPolicy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -26,17 +26,17 @@ class HandymanController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-      public function store(Request $request)
-    {
-        //
-    }
+    //   public function store(Request $request)
+    // {
+    //     //
+    // }
 
     /**
      * Display the specified resource.
      */
     public function show(Handyman $handyman)
     {
-        dd($handyman);
+        // dd($handyman);
         return new HandymanResource($handyman);
     }
 
@@ -45,36 +45,29 @@ class HandymanController extends Controller
      */
     public function update(Request $request, Handyman $handyman)
     {
+        $this->authorize($handyman);
         $validated = $request->validate([
              'name' => ['required', 'string', 'max:255'],
             'city' => ['required', 'string', 'max:255'],
-            'lon' => ['required', 'numeric', 'between:-90,90'],
-            'lat' => ['required', 'numeric', 'between:-180,180'],
+            'lon' => [ 'numeric', 'between:-90,90'],
+            'lat' => [ 'numeric', 'between:-180,180'],
             'image' => ['image','mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'phone_number' => ['string','max:24'],
+            'description' => ['string', 'max:500'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
-            'category' => ['required','numeric', 'exists:categories,id'],
-            'password' => ['required', 'confirmed',],
+            'category' => ['numeric', 'exists:categories,id'],
+            'password' => [ 'confirmed',],
         ]);
         $validated['password']= Hash::make($request->password);
+         $handyman->fill($validated);
         if($request->hasFile('image')){
-            $validated['image'] = '/storage/'.$request->file('image')->store('/images/users','public');
+            $validated['image'] = '/storage/'.$request->file('image')->store('/images/handdymans','public');
         }else{
             $validated['image'] = $handyman->profile_image;
         }
-        // dd($validated);
-        $handyman->update(
-            ['name' => $request->name,
-            'email' => $request->email,
-            'latitude' => $request->lat,
-            'longitude' => $request->lon,
-            'city' => $request->city,
-            'category_id' => $request->category,
-            'profile_image' => $validated['image'],
-            'password' => Hash::make($request->password)]
-        );
-          return response()->json(["message"=>'account updated','user'=>$handyman]);
+        $handyman->save();
+        return response()->json(["message"=>'account updated','user'=>$handyman]);
           
-
     }
 
     /**
@@ -82,11 +75,15 @@ class HandymanController extends Controller
      */
     public function destroy(Handyman $handyman)
     {
-        //
+        $this->authorize($handyman);
+            
+        $handyman->delete();
+        return response()->json(['message'=>'deleted']);
     }
     // check password
     public function checkHandymansPassword (Request $request,Handyman $handyman)
     {
+        $request->validate(['oldpassword'=>'required']);
         if(Hash::check($request->oldpassword, $handyman->password))
         {
            return response()->json(["message"=>true]);

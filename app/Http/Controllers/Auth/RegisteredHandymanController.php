@@ -21,15 +21,17 @@ class RegisteredHandymanController extends Controller
             'lat' => ['required', 'numeric', 'between:-180,180'],
             'image' => ['sometimes', 'image','mimes:jpeg,png,jpg,gif', 'max:2048'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:handy_man'],
+            'phone_number' => ['required','string','max:24'],
+            'description' => ['required','string', 'max:500'],
             'category' => ['required','numeric', 'exists:categories,id'],
             'password' => ['required', 'confirmed',],
         ]);
 
         if($request->hasFile('image')){
-            $request->image = env('APP_URL').'/storage/'.$request->file('image')->store('/images/users','public');
+            $request->image = '/storage/'.$request->file('image')->store('/images/handymans','public');
             
         }else{
-            $request['image'] = env('APP_URL').'/storage/images/users/user_default_image.png';
+            $request['image'] = '/storage/images/users/user_default_image.png';
         }
 
         $bricoler = Handyman::create(
@@ -41,6 +43,8 @@ class RegisteredHandymanController extends Controller
             'city' => $request->city,
             'category_id' => $request->category,
             'profile_image' => $request->image,
+            'phone_number' => $request->phone_number,
+            'description' => $request->description,
             'password' => Hash::make($request->password),
         ]
     );

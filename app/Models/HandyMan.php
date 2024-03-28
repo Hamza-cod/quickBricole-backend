@@ -27,6 +27,8 @@ class Handyman extends Authenticatable
         'latitude',
         'category_id',
         'profile_image',
+        'description',
+        'phone_number',
         'password',
     ];
 

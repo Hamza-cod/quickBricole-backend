@@ -19,6 +19,7 @@ class RegisteredUserController extends Controller
             'lon' => ['required', 'numeric', 'between:-90,90'],
             'lat' => ['required', 'numeric', 'between:-180,180'],
             'image' => ['sometimes', 'image','mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'phone_number' => ['required','string','max:24'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -37,6 +38,7 @@ class RegisteredUserController extends Controller
             'longitude' => $request->lon,
             'city' => $request->city,
             'profile_image' => $request->image,
+            'phone_number' => $request->phone_number,
             'password' => Hash::make($request->password),
         ]
     );
