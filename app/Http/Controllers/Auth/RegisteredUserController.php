@@ -20,7 +20,7 @@ class RegisteredUserController extends Controller
             'lat' => ['required', 'numeric', 'between:-180,180'],
             'image' => ['sometimes', 'image','mimes:jpeg,png,jpg,gif', 'max:2048'],
             'phone_number' => ['required','string','max:24'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users', 'unique:handy_man'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
         if($request->hasFile('image')){

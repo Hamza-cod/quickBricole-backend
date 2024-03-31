@@ -20,12 +20,14 @@ class RegisteredHandymanController extends Controller
             'lon' => ['required', 'numeric', 'between:-90,90'],
             'lat' => ['required', 'numeric', 'between:-180,180'],
             'image' => ['sometimes', 'image','mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:handy_man'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:handy_man', 'unique:users'],
             'phone_number' => ['required','string','max:24'],
             'description' => ['required','string', 'max:500'],
             'category' => ['required','numeric', 'exists:categories,id'],
             'password' => ['required', 'confirmed',],
         ]);
+
+        
 
         if($request->hasFile('image')){
             $request->image = '/storage/'.$request->file('image')->store('/images/handymans','public');
