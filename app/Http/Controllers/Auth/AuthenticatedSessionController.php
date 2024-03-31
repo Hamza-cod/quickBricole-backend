@@ -39,7 +39,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request): Response
+    public function destroy(Request $request)
     {
          $guards =  ['handyman','web',];
             foreach($guards as $guard)
@@ -48,11 +48,11 @@ class AuthenticatedSessionController extends Controller
                 if($currenGuard->check())
                 {
                     $user = $currenGuard->user();
+                    $user->tokens()->delete();
                     break;
                 }
             }
-            $user->tokens()->delete();
-        Auth::guard('web')->logout();
+        Auth::guard('handyman')->logout();
 
         $request->session()->invalidate();
 
