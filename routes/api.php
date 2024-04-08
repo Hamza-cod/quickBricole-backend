@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HandymanController;
 use App\Http\Controllers\UserController;
+use App\Http\Resources\HandymanResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,7 +19,12 @@ use Illuminate\Support\Facades\Route;
 */
 
     Route::middleware(['auth:sanctum,handyman'])->get('/user', function (Request $request) {
-        return $request->user();
+        $user = $request->user();
+        if ($user->role === "handyman") {
+            return new HandymanResource($user);
+        }else{
+            return ['data' => $user];
+        }
     });
 
 Route::put('users/{user}',[UserController::class,'update']);
