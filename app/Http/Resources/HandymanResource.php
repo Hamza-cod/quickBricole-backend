@@ -23,12 +23,13 @@ class HandymanResource extends JsonResource
             "city"=>$this->city,
             "profile_image"=> $this->profile_image,
             "category_id"=>$this->category_id ,
-            "category"=>$this->category?->name,
+            "category"=>$this->category->name,
             "phone_number"=>$this->phone_number,
             "description"=>$this->description,
             "email_verified_at"=>$this->email_verified_at ,
             "created_at"=> $this->created_at,
-            "updated_at"=> $this->updated_at
+            "updated_at"=> $this->updated_at,
+            "role" => $this->role,
         ];;
     }
 }

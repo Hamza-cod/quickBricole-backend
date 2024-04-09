@@ -14,6 +14,6 @@ class Category extends Model
     ];
     public function bricolers ():HasMany
     {
-        return $this->hasMany(Handyman::class,'category_id');
+        return $this->hasMany(Handyman::class, 'category_id');
     }
 }
