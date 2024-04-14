@@ -33,7 +33,7 @@ class RegisteredHandymanController extends Controller
             $request->image = '/storage/'.$request->file('image')->store('/images/handymans','public');
             
         }else{
-            $request['image'] = '/storage/images/users/user_default_image.png';
+            $request['image'] = '/storage/images/users/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg';
         }
 
         $bricoler = Handyman::create(
