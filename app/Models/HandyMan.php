@@ -52,7 +52,7 @@ class Handyman extends Authenticatable
     ];
     public function category():BelongsTo
     {
-        return $this->belongsTo(Category::class,'category_id');
+        return $this->belongsTo(Category::class,'category_id', "id");
     }
 
     protected $appends = ['role'];

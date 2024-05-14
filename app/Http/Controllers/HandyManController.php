@@ -37,6 +37,7 @@ class HandymanController extends Controller
     public function show(Handyman $handyman)
     {
         // dd($handyman);
+        
         return new HandymanResource($handyman);
     }
 
@@ -45,28 +46,39 @@ class HandymanController extends Controller
      */
     public function update(Request $request, Handyman $handyman)
     {
-        $this->authorize($handyman);
-        $validated = $request->validate([
-             'name' => ['required', 'string', 'max:255'],
-            'city' => ['required', 'string', 'max:255'],
-            'lon' => [ 'numeric', 'between:-90,90'],
-            'lat' => [ 'numeric', 'between:-180,180'],
-            'image' => ['image','mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'phone_number' => ['string','max:24'],
-            'description' => ['string', 'max:500'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
-            'category' => ['numeric', 'exists:categories,id'],
-            'password' => [ 'confirmed',],
-        ]);
-        $validated['password']= Hash::make($request->password);
-         $handyman->fill($validated);
-        if($request->hasFile('image')){
-            $validated['image'] = '/storage/'.$request->file('image')->store('/images/handdymans','public');
-        }else{
-            $validated['image'] = $handyman->profile_image;
-        }
-        $handyman->save();
-        return response()->json(["message"=>'account updated','user'=>$handyman]);
+        $this->authorize('update', $handyman);
+         // 2. Validation
+    $validated = $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'city' => ['required', 'string', 'max:255'],
+        'lon' => ['numeric', 'between:-90,90'],
+        'lat' => ['numeric', 'between:-180,180'],
+        'profile_image' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+        'phone_number' => ['string', 'max:24'],
+        'description' => ['string', 'max:500'],
+        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:handy_man,email,'.$handyman->id],
+        'category_id' => ['required','numeric', 'exists:categories,id'],
+        'password' => ['nullable' ,'confirmed'],
+    ]);
+
+    // 3. Password Hashing
+    if (isset($validated["password"]) && !empty($validated["password"])) {
+        $validated["password"] = bcrypt($validated["password"]);
+    }else {
+        unset($validated["password"]);
+    }
+    // 4. File Upload Handling
+    if ($request->hasFile('profile_image')) {
+        $validated['profile_image'] = '/storage/'.$request->file('profile_image')->store('/images/handymans', 'public');
+    } else {
+        $validated['profile_image'] = $handyman->profile_image;
+    }
+
+    // 5. Update Handyman
+    $handyman->update($validated);
+
+    // 6. Return Response
+    return response()->json(["message" => 'Account updated', 'handyman' => $handyman], 200);
           
     }
 

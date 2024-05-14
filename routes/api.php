@@ -5,6 +5,7 @@ use App\Http\Controllers\HandymanController;
 use App\Http\Controllers\UserController;
 use App\Http\Resources\HandymanResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,6 +22,10 @@ use Illuminate\Support\Facades\Route;
     Route::middleware(['auth:sanctum,handyman'])->get('/user', function (Request $request) {
         $user = $request->user();
         if ($user->role === "handyman") {
+            // $handymans = Cache::remember("handymans", 1440, function() use ($user){
+            //     return new HandymanResource($user);
+            // });
+            // return $handymans;
             return new HandymanResource($user);
         }else{
             return ['data' => $user];
