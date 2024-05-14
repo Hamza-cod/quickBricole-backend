@@ -53,7 +53,7 @@ class UserController extends Controller
             'email' => [ 'required','string', 'lowercase', 'email', 'max:255', 'unique:users'],
             'password' => ['required','confirmed', Rules\Password::defaults()],
         ]);
-         $validated['password']= Hash::make($request->password);
+        $validated['password']= Hash::make($request->password);
          $user->fill($validated);
         if($request->hasFile('image')){
             $validated['image'] = '/storage/'.$request->file('image')->store('/images/users','public');
