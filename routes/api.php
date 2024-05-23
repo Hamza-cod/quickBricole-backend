@@ -22,10 +22,6 @@ use Illuminate\Support\Facades\Route;
     Route::middleware(['auth:sanctum,handyman'])->get('/user', function (Request $request) {
         $user = $request->user();
         if ($user->role === "handyman") {
-            // $handymans = Cache::remember("handymans", 1440, function() use ($user){
-            //     return new HandymanResource($user);
-            // });
-            // return $handymans;
             return new HandymanResource($user);
         }else{
             return ['data' => $user];
@@ -35,6 +31,7 @@ use Illuminate\Support\Facades\Route;
 Route::put('users/{user}',[UserController::class,'update']);
 Route::delete('users/{user}',[UserController::class,'destroy']);
 Route::get('users/{user}',[UserController::class,'show']);
-
+// get closest handyman 
+Route::get('/closest-handyman',[UserController::class,'quiqueHandyman']);
 Route::apiResource('handymans',HandymanController::class);
 Route::apiResource('categories',CategoryController::class);
