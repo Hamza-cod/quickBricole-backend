@@ -45,7 +45,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return $user->id === $model->user;
+        return $user->id === $model->id;
     }
 
     /**
