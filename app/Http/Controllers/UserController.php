@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\HandymanCollection;
 use App\Models\Handyman;
 use App\Models\User;
+use App\Policies\UserPolicy;
 use Illuminate\Validation\Rules;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -56,25 +57,30 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        $this->authorize('update', $user);
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'city' => ['required', 'string', 'max:255'],
-            'lon' => ['required', 'numeric', 'between:-90,90'],
-            'lat' => ['required', 'numeric', 'between:-180,180'],
+            'lon' => ['numeric', 'between:-90,90'],
+            'lat' => ['numeric', 'between:-180,180'],
             'phone_number' => ['string', 'max:24'],
-            'image' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'profile_image' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'password' => ['nullable' ,'confirmed'],
         ]);
-        $validated['password'] = Hash::make($request->password);
-        $user->fill($validated);
-        if ($request->hasFile('image')) {
-            $validated['image'] = '/storage/' . $request->file('image')->store('/images/users', 'public');
-        } else {
-            $validated['image'] = $user->profile_image;
+        if (isset($validated["password"]) && !empty($validated["password"])) {
+            $validated["password"] = bcrypt($validated["password"]);
+        }else {
+            unset($validated["password"]);
         }
-        $user->save();
-        return response()->json(["message" => 'account updated', 'user' => $user]);
+        
+        if ($request->hasFile('profile_image')) {
+            $validated['profile_image'] = '/storage/'.$request->file('profile_image')->store('/images/users', 'public');
+        } else {
+            $validated['profile_image'] = $user->profile_image;
+        }
+        $user->update($validated);
+        return response()->json(["message" => 'Account updated', 'user' => $user], 200);
     }
 
     /**
